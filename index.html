@@ -1,142 +1,133 @@
 
 <!DOCTYPE html>
 <html lang="uk">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Onboardly — адаптація в одному місці</title>
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-09KHGGZ4PB"></script>
+  <meta
+    name="description"
+    content="Onboardly — концепція платформи для автоматизації онбордингу співробітників."
+  >
+
   <script>
+    const GA_ID = "G-09KHGGZ4PB";
+    const CLARITY_ID = "z7b0luk8fx";
+    const CONSENT_KEY = "onboardly_analytics_consent";
+
     window.dataLayer = window.dataLayer || [];
 
     function gtag() {
-      dataLayer.push(arguments);
+      window.dataLayer.push(arguments);
     }
 
-    gtag('js', new Date());
-    gtag('config', 'G-09KHGGZ4PB');
-  </script>
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "z7b0luk8fx");
-  
-<!-- Керування згодою на аналітику -->
-<script>
-  const GA_ID = "G-09KHGGZ4PB";
-  const CLARITY_ID = "z7b0luk8fx";
-
-  window.dataLayer = window.dataLayer || [];
-
-  function gtag() {
-    dataLayer.push(arguments);
-  }
-
-  // За замовчуванням — без згоди
-  gtag("consent", "default", {
-    analytics_storage: "denied",
-    ad_storage: "denied",
-    ad_user_data: "denied",
-    ad_personalization: "denied"
-  });
-
-  let analyticsLoaded = false;
-
-  function loadAnalytics() {
-    if (analyticsLoaded) return;
-
-    analyticsLoaded = true;
-
-    gtag("consent", "update", {
-      analytics_storage: "granted",
+    gtag("consent", "default", {
+      analytics_storage: "denied",
       ad_storage: "denied",
       ad_user_data: "denied",
       ad_personalization: "denied"
     });
 
-    gtag("js", new Date());
-    gtag("config", GA_ID);
+    let analyticsLoaded = false;
 
-    const gaScript = document.createElement("script");
-    gaScript.async = true;
-    gaScript.src =
-      "https://www.googletagmanager.com/gtag/js?id=" +
-      GA_ID;
+    function loadAnalytics() {
+      if (analyticsLoaded) return;
 
-    document.head.appendChild(gaScript);
+      analyticsLoaded = true;
 
-    // Microsoft Clarity
-    (function(c, l, a, r, i, t, y) {
-      c[a] = c[a] || function() {
-        (c[a].q = c[a].q || []).push(arguments);
-      };
+      gtag("consent", "update", {
+        analytics_storage: "granted",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied"
+      });
 
-      t = l.createElement(r);
-      t.async = 1;
-      t.src = "https://www.clarity.ms/tag/" + i;
+      gtag("js", new Date());
+      gtag("config", GA_ID);
 
-      y = l.getElementsByTagName(r)[0];
-      y.parentNode.insertBefore(t, y);
+      const gaScript = document.createElement("script");
+      gaScript.async = true;
+      gaScript.src =
+        "https://www.googletagmanager.com/gtag/js?id=" + GA_ID;
 
-    })(window, document, "clarity", "script", CLARITY_ID);
+      document.head.appendChild(gaScript);
 
-    // Згода для Clarity
-    clarity("consentv2", {
-      analytics_Storage: "granted",
-      ad_Storage: "denied"
+      // Microsoft Clarity
+      (function(c, l, a, r, i, t, y) {
+        c[a] = c[a] || function() {
+          (c[a].q = c[a].q || []).push(arguments);
+        };
+
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = "https://www.clarity.ms/tag/" + i;
+
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(
+        window,
+        document,
+        "clarity",
+        "script",
+        CLARITY_ID
+      );
+
+      window.clarity("consentv2", {
+        analytics_Storage: "granted",
+        ad_Storage: "denied"
+      });
+    }
+
+    function saveConsent(accepted) {
+      localStorage.setItem(
+        CONSENT_KEY,
+        accepted ? "accepted" : "rejected"
+      );
+
+      if (accepted) {
+        loadAnalytics();
+      } else if (analyticsLoaded) {
+
+        location.reload();
+        return;
+      }
+
+      document.getElementById("cookie-banner").hidden = true;
+    }
+
+    function openCookieSettings() {
+      document.getElementById("cookie-banner").hidden = false;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const saved = localStorage.getItem(CONSENT_KEY);
+
+      if (saved === "accepted") {
+        loadAnalytics();
+      }
+
+      document.getElementById("cookie-banner").hidden =
+        saved === "accepted" || saved === "rejected";
     });
-  }
+  </script>
 
-  function saveConsent(accepted) {
-    localStorage.setItem(
-      "onboardly_analytics_consent",
-      accepted ? "accepted" : "rejected"
-    );
-
-    if (accepted) {
-      loadAnalytics();
-    } else if (analyticsLoaded) {
-      location.reload();
-      return;
-    }
-
-    document.getElementById("cookie-banner")
-      .hidden = true;
-  }
-
-  function openCookieSettings() {
-    document.getElementById("cookie-banner")
-      .hidden = false;
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const saved = localStorage.getItem(
-      "onboardly_analytics_consent"
-    );
-
-    if (saved === "accepted") {
-      loadAnalytics();
-    }
-
-    document.getElementById("cookie-banner")
-      .hidden = saved === "accepted" || saved === "rejected";
-  });
-</script>
-
-</script>
   <style>
     :root {
       --ink: #17364c;
       --blue: #286b91;
       --light: #edf5f9;
+      --muted: #526879;
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -151,6 +142,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 20px;
       border-bottom: 1px solid #dce7ed;
     }
 
@@ -163,13 +155,24 @@
     button {
       display: inline-block;
       background: var(--blue);
-      color: #fff;
+      color: white;
       text-decoration: none;
       border: 0;
       border-radius: 12px;
       padding: 13px 21px;
       cursor: pointer;
       font: inherit;
+    }
+
+    a.btn:hover,
+    button:hover {
+      opacity: 0.9;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid #e3a13b;
+      outline-offset: 3px;
     }
 
     main section {
@@ -200,7 +203,10 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(230px, 1fr)
+      );
       gap: 18px;
     }
 
@@ -211,12 +217,16 @@
     }
 
     .muted {
-      color: #526879;
+      color: var(--muted);
+    }
+
+    .alternate {
+      background: #f8fbfd;
     }
 
     .mini {
       padding: 20px;
-      background: #fff;
+      background: white;
       border: 1px solid #cfdee7;
       border-radius: 16px;
       max-width: 700px;
@@ -239,27 +249,6 @@
       white-space: nowrap;
     }
 
-    label {
-      display: block;
-      margin: 13px 0 4px;
-      font-weight: 600;
-    }
-
-    input {
-      padding: 12px;
-      width: 100%;
-      max-width: 460px;
-      border: 1px solid #a6bfce;
-      border-radius: 9px;
-      font: inherit;
-    }
-
-    footer {
-      padding: 30px 8%;
-      background: var(--ink);
-      color: #fff;
-    }
-
     details {
       margin: 12px 0;
       padding: 18px;
@@ -272,14 +261,78 @@
       font-weight: 600;
     }
 
+    footer {
+      padding: 30px 8%;
+      background: var(--ink);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-button {
+      background: transparent;
+      border: 1px solid white;
+      font-size: 14px;
+    }
+
+    .privacy-text {
+      max-width: 800px;
+    }
+
+    .privacy-text p {
+      color: var(--muted);
+    }
+
+    .cookie-banner {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      max-width: 650px;
+      margin: auto;
+      padding: 24px;
+      background: white;
+      color: var(--ink);
+      border: 1px solid #dce7ed;
+      border-radius: 16px;
+      box-shadow: 0 8px 35px rgba(0, 0, 0, 0.18);
+      z-index: 9999;
+    }
+
+    .cookie-banner[hidden] {
+      display: none;
+    }
+
+    .cookie-banner h3 {
+      margin-top: 0;
+    }
+
+    .cookie-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .cookie-buttons button:last-child {
+      background: white;
+      color: var(--ink);
+      border: 1px solid var(--ink);
+    }
+
+    .cookie-banner a {
+      color: var(--blue);
+    }
+
     .note {
       font-size: 13px;
-      color: #526879;
+      color: var(--muted);
     }
 
     @media (max-width: 600px) {
       header {
-        gap: 15px;
         flex-wrap: wrap;
       }
 
@@ -290,23 +343,77 @@
       .item {
         flex-wrap: wrap;
       }
+
+      .cookie-banner {
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        padding: 18px;
+      }
     }
   </style>
+
 </head>
 
 <body>
+
+  <!-- Банер згоди -->
+  <div
+    id="cookie-banner"
+    class="cookie-banner"
+    role="region"
+    aria-label="Згода на аналітику"
+    hidden
+  >
+    <h3>Використання аналітики</h3>
+
+    <p>
+      Onboardly використовує Google Analytics 4
+      та Microsoft Clarity для аналізу відвідувань
+      і покращення сайту.
+    </p>
+
+    <p>
+      Ви можете прийняти або відхилити
+      необов'язкове аналітичне відстеження.
+    </p>
+
+    <div class="cookie-buttons">
+      <button
+        type="button"
+        onclick="saveConsent(true)"
+      >
+        Прийняти
+      </button>
+
+      <button
+        type="button"
+        onclick="saveConsent(false)"
+      >
+        Відхилити
+      </button>
+    </div>
+
+    <p class="note">
+      <a href="#privacy">
+        Політика конфіденційності
+      </a>
+    </p>
+  </div>
+
+  <!-- Шапка -->
   <header>
     <span class="logo">◈ Onboardly</span>
-<a
-  class="btn"
-  data-cta="header"
-  href="https://forms.gle/1snrTBN9y1Ub5hg49"
-  target="_blank"
-  rel="noopener noreferrer"
->
-  Ранній доступ
-</a>
 
+    <a
+      class="btn"
+      data-cta="header"
+      href="https://forms.gle/1snrTBN9y1Ub5hg49"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Ранній доступ
+    </a>
   </header>
 
   <main>
@@ -326,20 +433,20 @@
         Onboardly допомагає HR-командам бачити стан
         кожного онбордингу та координувати роботу
         без пошуку завдань у різних чатах.
-      </p>    
-<a
-  class="btn"
-  data-cta="hero"
-  href="https://forms.gle/1snrTBN9y1Ub5hg49"
-  target="_blank"
-  rel="noopener noreferrer"
->
-  Запросити ранній доступ
-</a>
+      </p>
 
+      <a
+        class="btn"
+        data-cta="hero"
+        href="https://forms.gle/1snrTBN9y1Ub5hg49"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Запросити ранній доступ
+      </a>
     </section>
 
-    <!-- Проблеми користувачів -->
+    <!-- Проблеми -->
     <section>
       <h2>Знайома ситуація?</h2>
 
@@ -361,8 +468,8 @@
       </div>
     </section>
 
-    <!-- Демонстрація інтерфейсу -->
-    <section style="background: #f8fbfd">
+    <!-- Панель -->
+    <section class="alternate">
       <h2>Одна панель — зрозумілий прогрес</h2>
 
       <p>
@@ -391,9 +498,17 @@
       </div>
 
       <div class="grid" style="margin-top: 20px">
-        <div class="panel">✓ Єдиний огляд статусів</div>
-        <div class="panel">✓ Видимі відповідальні</div>
-        <div class="panel">✓ Контроль дедлайнів</div>
+        <div class="panel">
+          ✓ Єдиний огляд статусів
+        </div>
+
+        <div class="panel">
+          ✓ Видимі відповідальні
+        </div>
+
+        <div class="panel">
+          ✓ Контроль дедлайнів
+        </div>
       </div>
     </section>
 
@@ -409,15 +524,15 @@
       </p>
     </section>
 
-    <!-- Як працює продукт -->
-    <section style="background: #f8fbfd">
+    <section class="alternate">
       <h2>Як це працюватиме</h2>
 
       <div class="grid">
-
         <div class="panel">
           <strong>01. Оберіть шаблон</strong>
-          <p>Створіть типовий маршрут адаптації.</p>
+          <p>
+            Створіть типовий маршрут адаптації.
+          </p>
         </div>
 
         <div class="panel">
@@ -429,82 +544,47 @@
 
         <div class="panel">
           <strong>03. Відстежуйте прогрес</strong>
-          <p>Бачте статуси та майбутні дедлайни.</p>
+          <p>
+            Бачте статуси та майбутні дедлайни.
+          </p>
         </div>
-
       </div>
     </section>
 
-<section id="early">
-  <h2>Отримайте ранній доступ до Onboardly</h2>
-
-  <p>
-    Залиште заявку, щоб дізнатися про запуск
-    платформи автоматизації онбордингу.
-  </p>
-
-  <a
-    class="btn"
-    data-cta="early"
-    href="https://forms.gle/1snrTBN9y1Ub5hg49"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    Отримати ранній доступ
-  </a>
-</section>
-
-      <h2>Зацікавились раннім доступом?</h2>
+    <section id="early">
+      <h2>
+        Отримайте ранній доступ до Onboardly
+      </h2>
 
       <p>
-        Це демонстраційний макет.
-        Форма нижче нічого не відправляє
-        та не зберігає.
+        Залиште заявку, щоб дізнатися про запуск
+        платформи автоматизації онбордингу.
       </p>
 
-      <form id="form">
-
-        <label for="name">Ім’я</label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          autocomplete="name"
-          required
-        >
-
-        <label for="email">Робочий email</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autocomplete="email"
-          required
-        >
-
-        <p>
-          <button type="submit">
-            Перевірити форму
-          </button>
-        </p>
-
-      </form>
-
-      <p id="msg" role="status"></p>
+      <a
+        class="btn"
+        data-cta="early"
+        href="https://forms.gle/1snrTBN9y1Ub5hg49"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Отримати ранній доступ
+      </a>
 
       <p class="note">
-        Для реального збору контактів необхідно
-        підключити форму та додати інформацію
-        про обробку персональних даних.
+        Анкета відкриється в новій вкладці.
+        Перед надсиланням даних ознайомтеся
+        з інформацією про їх обробку.
       </p>
     </section>
 
-    <!-- FAQ -->
-    <section style="background: #f8fbfd">
+    <section class="alternate">
       <h2>Поширені запитання</h2>
 
       <details>
-        <summary>Чи доступний Onboardly зараз?</summary>
+        <summary>
+          Чи доступний Onboardly зараз?
+        </summary>
         <p>
           Наразі це концепт і демонстраційний MVP,
           а не повністю запущений сервіс.
@@ -512,15 +592,19 @@
       </details>
 
       <details>
-        <summary>Чи є інтеграція з Jira та Slack?</summary>
+        <summary>
+          Чи є інтеграція з Jira та Slack?
+        </summary>
         <p>
-          Інтеграції розглядаються як потенційний
-          наступний етап.
+          Інтеграції розглядаються
+          як потенційний наступний етап.
         </p>
       </details>
 
       <details>
-        <summary>Скільки коштуватиме сервіс?</summary>
+        <summary>
+          Скільки коштуватиме сервіс?
+        </summary>
         <p>
           У попередньому ринковому аналізі
           розглядалися тарифні плани.
@@ -529,62 +613,118 @@
       </details>
 
       <details>
-        <summary>Чи зберігаються дані у формі?</summary>
+        <summary>
+          Як залишити заявку?
+        </summary>
         <p>
-          Ні. Демонстраційна форма не надсилає
-          й не зберігає введені дані.
+          Натисніть кнопку раннього доступу
+          та заповніть Google Forms.
         </p>
       </details>
     </section>
 
+    <!-- Конфіденційність -->
+    <section id="privacy">
+      <div class="privacy-text">
+
+        <h2>Конфіденційність</h2>
+
+        <p>
+          Onboardly — демонстраційний MVP
+          для перевірки продуктових гіпотез.
+        </p>
+
+        <h3>Аналітика</h3>
+
+        <p>
+          За згодою відвідувача використовуються
+          Google Analytics 4 та Microsoft Clarity
+          для аналізу відвідувань і покращення
+          зручності сайту.
+        </p>
+
+        <p>
+          Аналітика може обробляти технічні
+          відомості про пристрій, браузер,
+          взаємодії зі сторінкою та
+          приблизну географічну інформацію.
+        </p>
+
+        <h3>Збір заявок</h3>
+
+        <p>
+          Для збору заявок на ранній доступ
+          використовується Google Forms.
+          Користувач добровільно надає інформацію
+          через окрему форму.
+        </p>
+
+        <p>
+          Дані заявок використовуються для
+          розгляду зацікавленості в продукті
+          та зв'язку щодо можливого запуску,
+          відповідно до інформації у формі.
+        </p>
+
+        <h3>Керування згодою</h3>
+
+        <p>
+          Відвідувач може прийняти або відхилити
+          необов'язкову аналітику.
+        </p>
+
+        <p>
+          Вибір зберігається локально в браузері.
+          Його можна змінити за допомогою кнопки
+          «Налаштування аналітики».
+        </p>
+
+        <p class="note">
+          Перед повноцінним використанням сайту
+          цей розділ необхідно доповнити
+          контактами відповідального за дані,
+          строками зберігання та порядком
+          подання запитів на видалення інформації.
+        </p>
+
+      </div>
+    </section>
+
   </main>
 
-  <!-- Підвал -->
   <footer>
-    © 2026 Onboardly • Демонстраційний MVP
+    <span>
+      © 2026 Onboardly • Демонстраційний MVP
+    </span>
+
+    <button
+      class="footer-button"
+      type="button"
+      onclick="openCookieSettings()"
+    >
+      Налаштування аналітики
+    </button>
   </footer>
 
-  <!-- JavaScript -->
+  <!-- Відстеження CTA -->
   <script>
+    document.querySelectorAll("[data-cta]").forEach(
+      function(button) {
 
-    // Відстеження натискань CTA
-    document.querySelectorAll('[data-cta]').forEach(button => {
+        button.addEventListener("click", function() {
+          const position = button.dataset.cta;
 
-      button.addEventListener('click', function() {
-
-        console.info('CTA_click', {
-          position: button.dataset.cta
-        });
-
-        if (typeof gtag === 'function') {
-
-          gtag('event', 'cta_click', {
-            button_position: button.dataset.cta
+          console.info("CTA_click", {
+            position: position
           });
-
-        }
-
-      });
-
-    });
-
-    // Демонстраційна форма
-    const form = document.getElementById('form');
-
-    form.addEventListener('submit', function(event) {
-
-      event.preventDefault();
-
-      document.getElementById('msg').textContent =
-        'Поля заповнені коректно. ' +
-        'Дані не відправлено та не збережено.';
-
-      console.info('lead_submit_demo');
-
-      form.reset();
-
-    });
-
+          if (analyticsLoaded) {
+            gtag("event", "cta_click", {
+              button_position: position
+            });
+          }
+        });
+      }
+    );
   </script>
 
 </body>
